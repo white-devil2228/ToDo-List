@@ -1,0 +1,90 @@
+{% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en" data-theme="night">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!--- Tailwind CSS & Daisy UI CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.18.0/dist/full.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2/dist/tailwind.min.css" rel="stylesheet" type="text/css" />
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+
+    <!-- Font Awesome cdn css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+        
+    <title>Todo List</title>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Todo List</h1>
+                <form method="POST" class="w-full" name="taskForm">
+                    {% csrf_token %}
+                    <div class="input-section">
+                        {% render_field form.task placeholder="Enter Your Task Here...." class="todo-input" %}
+                        <button class="todo-button">
+                            <i class="fas fa-plus-circle fa-lg"></i>
+                        </button>
+                    </div>
+                </form>
+
+                
+            <!-- <form method="POST" class="w-full" name="taskForm">
+                {% csrf_token %}
+                <div class="input-section">
+                    {% render_field form.task placeholder="Enter Your Task Here...." class="input input-bordered input-secondary w-full max-w-xs rounded-3xl focus:\32xl\:outline-white text-xl"  %}
+                    <button class="btn btn-secondary rounded-3xl">
+                        <i class="bx bx-plus bx-sm"></i>
+                    </button>
+                </div>
+            </form> -->
+        </header>
+
+        {% if filter_form %}
+        <div class="todos-filter">
+            <form method="POST">
+                <div class="input-section">
+                    {% csrf_token %}
+                    {% render_field filter_form.status class="dropdown-content p-2 shadow bg-base-100 rounded-3xl w-36 h-12" %}
+                    <input type="submit" value="Filter" class="btn rounded-3xl" id="filter-btn">
+                </div>
+            </form>
+
+            <a href="{% url 'deleteAllTaskView' %}" class="btn rounded-3xl" id="delete-all">
+                Delete All
+            </a>
+        </div>
+        {% endif %}
+
+        <ul class="todos-list">
+            {% for task in todoList %}
+            <li class="todo-item">
+                <p
+                    class="text-xl {% if task.completed %}line-through{% endif %} transform hover:scale-110 motion-reduce:transform-none">
+                    <a href="{% url 'completeTaskView' task.id %}">{{task.task}}</a>
+                </p>
+                <div class="todo-actions">
+                    <a href="{% url 'editTaskView' task.id %}" class="btn rounded-3xl" id="edit-btn">
+                        <i class="bx bx-edit-alt bx-sm"></i>
+                    </a>
+                    <a href="{% url 'deleteTaskView' task.id %}" class="btn ml-2 rounded-3xl" id="trash-btn">
+                        <i class="bx bx-trash bx-sm"></i>
+                    </a>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+
+</html>
